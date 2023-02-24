@@ -1,0 +1,43 @@
+car			[a-zA-Z]
+digito		[0-9]
+cardigito	[a-zA-Z0-9]
+sec			({car}+)
+var			({car}{cardigito}*)
+email			({var}\@({sec}\.)?{sec}\.{sec})
+con1			((" "|\-)?)
+dig2			([0-9]{2})
+telefono		(([6]({dig2}{con1}){4}))|([9|8]({dig2}{con1}){4})
+prefijo		(https?:\/\/|(www\.))
+link 			({prefijo}{sec}\.{sec}(\.{sec}\/{sec})?)
+SPAM			("descuentos"|"compras"|"gratis"|"reservas"|"ofertas")
+fin			((\-)*)
+				int i=0;
+				int publi = 0;
+
+				
+%%
+{SPAM}			{publi = 1;i++;printf("\n\DATOS DE POSIBLE SPAM: %d\n", i);}
+{email}			{if (publi == 1) {
+						printf("Email: %s\n", yytext);
+					};}
+{telefono}		{if (publi == 1) {
+						printf("Teléfono: %s\n", yytext);
+					};}	
+{link}			{if (publi == 1) {
+						printf("Enlace: %s\n", yytext);
+					};}	
+{fin}				{publi = 0;}			
+
+.|\n				{;}
+%%
+int yywrap(){}
+
+int main()
+{
+
+	yylex();
+	{printf("\n\n\nNum. de emails recibidos marcados como SPAM %d\n\n",i);}
+	return 1;
+}
+
+	
